@@ -1,5 +1,5 @@
 
 public interface IAccess {
-	void addUser(ApplicationUser AU);
-	//boolean isAuthorized(ApplicationUser AU);
+	void register(Database dtb, ApplicationUser AU);
+	
 }

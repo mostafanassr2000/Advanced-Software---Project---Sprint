@@ -8,12 +8,12 @@ public class User extends ApplicationUser {
 
 	/*Methods*/
 
-	void register(Database dtb) {
-		dtb.addUser(this);
+	void register(Database dtb, ApplicationUser AU) {
+		accessObj.register(dtb, AU);
 	}
 
-	void login() {
-		
+	void login(String username, String password, Database dtb) {
+		authorizeObj.login(username, password, dtb);
 	}
 	
 	/*
@@ -28,8 +28,10 @@ public class User extends ApplicationUser {
 	
 	
 	public String toString() {
-		return "User Name: " + userName + " " + "Email: " + email; 
+		return "User Name: " + getUsername() + " " + "Email: " + getEmail(); 
 	}
+
+	
 	
 	
 

@@ -7,7 +7,7 @@ public class Driver extends ApplicationUser {
 	private boolean approved = false;
 	
 	/*Constructor*/
-	public Driver(String userName, String email, String password, String mobileNumber, String keyType,  String drivingLicense, String nationalID) {
+	public Driver(String userName, String email, String password, String mobileNumber, String keyType, String drivingLicense, String nationalID) {
 		super(userName, email, password, mobileNumber, keyType);
 		this.drivingLicense = drivingLicense;
 		this.nationalID = nationalID;
@@ -23,10 +23,21 @@ public class Driver extends ApplicationUser {
 		return approved;
 	}
 	
+	
+	void register(Database dtb, ApplicationUser AU) {
+		accessObj.register(dtb, AU);
+	}
+	
+	void login(String username, String password, Database dtb) {
+		authorizeObj.login(username, password, dtb);
+	}
+	
+	
+	/*
 	public void register(Database dtb) {	//Adding this driver in the database
 		
 		dtb.addDriver(this);
-	}
+	}*/
 
 	
 	public void login() {
@@ -34,11 +45,11 @@ public class Driver extends ApplicationUser {
 		
 	}
 	
-	
-	public String getUserName() {
-		return userName;
+	public void test() {
+		System.out.println("Success");
 	}
 	
+
 
 	public String getKey() {
 		return keyType;
@@ -46,7 +57,7 @@ public class Driver extends ApplicationUser {
 	
 	
 	public String toString() {
-		return "User Name: " + userName + " " + "Email: " + email; 
+		return "User Name: " + getUsername() + " " + "Email: " + getEmail(); 
 	}
 	
 	

@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 
 public class Admin extends ApplicationUser{
 
@@ -8,33 +7,30 @@ public class Admin extends ApplicationUser{
 	}
 	
 	/*Methods*/
-	void register(Database dtb) {
-		
-		dtb.addAdmin(this);
+	void register(Database dtb, ApplicationUser AU) {
+		accessObj.register(dtb, AU);
 	}
-
 	
-	void login() {
-		
-		
+	void login(String username, String password, Database dtb) {
+		authorizeObj.login(username, password, dtb);
 	}
+	
 	
 	public void listPendingRequests(WaitingApproval wApp) {
 		for(int i = 0; i < wApp.unapprovedDrivers.size(); i++) {
-			System.out.println("Driver Name: " + wApp.unapprovedDrivers.get(i).getUserName());
+			System.out.println("Driver Name: " + wApp.unapprovedDrivers.get(i).getUsername());
 		}
 	}
 	
 	public void verifyDriver(String driverUserName, WaitingApproval wApp, Database dtb) {
 		for(int i = 0; i < wApp.unapprovedDrivers.size(); i++) {
-			if(driverUserName.equals(wApp.unapprovedDrivers.get(i).getUserName())) {
+			if(driverUserName.equals(wApp.unapprovedDrivers.get(i).getUsername())) {
 				
 				wApp.unapprovedDrivers.get(i).setApproval();	//Setting approval to true.
 				
-				dtb.drivers.add(wApp.unapprovedDrivers.get(i));	//Adding the driver in the database.
+				dtb.applicationUsers.add(wApp.unapprovedDrivers.get(i));	//Adding the driver in the database.
 				
 				wApp.unapprovedDrivers.remove(i);	//Removing this driver from the unapproved drivers.
-				
 			}
 		}
 	}
@@ -44,7 +40,7 @@ public class Admin extends ApplicationUser{
 	}
 
 	public String toString() {
-		return "User Name: " + userName + " " + "Email: " + email; 
+		return "User Name: " + getUsername() + " " + "Email: " + getEmail(); 
 	}
 
 }
