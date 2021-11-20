@@ -29,16 +29,15 @@ public abstract class ApplicationUser {
 	
 	/*Methods*/
 	
-	abstract void register(Database dtb, ApplicationUser AU);
-	
-	abstract void login(String username, String password, Database dtb);
-
-	
+	public boolean register(Database dtb, ApplicationUser AU) {
+		return accessObj.register(dtb, AU);
+	}
+	public ApplicationUser login(String username, String password, Database dtb) {
+		return authorizeObj.login(username, password, dtb);
+	}
 	
 	/*Getters*/
-	
-	abstract public String getKey();
-	
+		
 	public String getUsername() {
 		return username;
 	}
@@ -47,12 +46,15 @@ public abstract class ApplicationUser {
 		return email;
 	}
 	
-	
 	public String getPassword() {
 		return password;
 	}
 	
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
 	
-	
-	
+	public String keyType() {
+		return keyType;
+	}
 }

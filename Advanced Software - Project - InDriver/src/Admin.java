@@ -1,46 +1,50 @@
 
 public class Admin extends ApplicationUser{
 
+	/*Attributes*/
+	ISuspension suspensionObj;
+	IVerification verificationObj;
+	
 	/*Constructor*/
-	public Admin(String userName, String email, String password, String mobileNumber, String keyType) {
-		super(userName, email, password, mobileNumber, keyType);
+	public Admin(String username, String email, String password, String mobileNumber, String keyType) {
+		super(username, email, password, mobileNumber, keyType);
 	}
 	
 	/*Methods*/
-	void register(Database dtb, ApplicationUser AU) {
-		accessObj.register(dtb, AU);
+	
+	public void setSuspension(ISuspension suspensionObj) {
+		this.suspensionObj = suspensionObj;
 	}
 	
-	void login(String username, String password, Database dtb) {
-		authorizeObj.login(username, password, dtb);
+	public void setVerification(IVerification verificationObj) {
+		this.verificationObj = verificationObj;
+	}
+	
+	public void listPendingRequests() {
+		verificationObj.listPendingRequests();
+	}
+	
+	public void verifyDriver(String driverUserName, Database dtb) {
+		verificationObj.verifyDriver(driverUserName, dtb);
+	}
+	
+	public void listSuspendedUsers() {
+		suspensionObj.listSuspendedUsers();
+	}
+	
+	public void suspend(String un, Database dtb) {
+		suspensionObj.suspend(un, dtb);
+	}
+	
+	public void unsuspend(String un, Database dtb) {
+		suspensionObj.unsuspend(un, dtb);
 	}
 	
 	
-	public void listPendingRequests(WaitingApproval wApp) {
-		for(int i = 0; i < wApp.unapprovedDrivers.size(); i++) {
-			System.out.println("Driver Name: " + wApp.unapprovedDrivers.get(i).getUsername());
-		}
-	}
 	
-	public void verifyDriver(String driverUserName, WaitingApproval wApp, Database dtb) {
-		for(int i = 0; i < wApp.unapprovedDrivers.size(); i++) {
-			if(driverUserName.equals(wApp.unapprovedDrivers.get(i).getUsername())) {
-				
-				wApp.unapprovedDrivers.get(i).setApproval();	//Setting approval to true.
-				
-				dtb.applicationUsers.add(wApp.unapprovedDrivers.get(i));	//Adding the driver in the database.
-				
-				wApp.unapprovedDrivers.remove(i);	//Removing this driver from the unapproved drivers.
-			}
-		}
-	}
 	
-	public String getKey() {
-		return keyType;
-	}
-
 	public String toString() {
-		return "User Name: " + getUsername() + " " + "Email: " + getEmail(); 
+		return "User Name: " + getUsername() + "-----" + "Type: " + keyType(); 
 	}
 
 }

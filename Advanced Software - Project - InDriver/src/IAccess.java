@@ -1,5 +1,5 @@
 
 public interface IAccess {
-	void register(Database dtb, ApplicationUser AU);
+	public boolean register(Database dtb, ApplicationUser AU);
 	
 }

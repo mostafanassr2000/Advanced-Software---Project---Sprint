@@ -1,38 +1,71 @@
+import java.util.ArrayList;
 
-public class User extends ApplicationUser {
+public class User extends ApplicationUser implements IRide{
+	
+	/*Attributes*/
+	public ArrayList<IDriver> nearbyDrivers;	
 
+	private String source = "";
+	private String destination = "";
+	
 	/*Constructor*/
-	public User(String userName, String email, String password, String mobileNumber, String keyType) {
-		super(userName, email, password, mobileNumber, keyType);
+	public User(String username, String email, String password, String mobileNumber, String keyType) {
+		super(username, email, password, mobileNumber, keyType);
+		
+		nearbyDrivers = new ArrayList<IDriver>();
 	}
 
 	/*Methods*/
 
-	void register(Database dtb, ApplicationUser AU) {
-		accessObj.register(dtb, AU);
+	public boolean requestRide(String source, String destination) {
+		this.source = source;
+		this.destination = destination;
+		
+		if(nearbyDrivers.size() == 0) {	//There is no nearby drivers in this area.
+			return false;
+		}
+		
+		for(IDriver drv : nearbyDrivers) {	//Notify Drivers
+			drv.update(this);
+		}
+		
+		return true;
+	}
+	
+	public void addDriver(Database dtb, String source) {
+		this.source = source;
+		
+		//Getting all drivers who have the source area as their favorite area
+		for(ApplicationUser au : dtb.applicationUsers) {	
+			if(au instanceof Driver) {
+				Driver drv = (Driver) au;	//Down Casting
+				for(String favArea : drv.favAreas) {
+					if(favArea.equals(source)) {
+						nearbyDrivers.add(drv);
+					}
+				}
+			}
+		}		
 	}
 
-	void login(String username, String password, Database dtb) {
-		authorizeObj.login(username, password, dtb);
-	}
-	
-	/*
-	public void registerUser(User user) {
-		accessObj.addUser(user);
-	}*/
-	
-	
-	public String getKey() {
-		return keyType;
+	public void freeArrayList() {
+		for(int i = 0; i < nearbyDrivers.size(); i++) {
+			nearbyDrivers.remove(i);
+		}
 	}
 	
 	
+	/*Getters*/
+	public String getSource() {
+		return source;
+	}
+	
+	public String getDestination() {
+		return destination;
+	}
+
 	public String toString() {
-		return "User Name: " + getUsername() + " " + "Email: " + getEmail(); 
+		return "User Name: " + getUsername() + "-----" + "Type: " + keyType(); 
 	}
-
-	
-	
-	
 
 }
