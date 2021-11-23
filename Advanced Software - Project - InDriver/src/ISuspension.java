@@ -1,7 +1,7 @@
 
 public interface ISuspension {
 	public void listSuspendedUsers();
-	public void suspend(String username, Database dtb);
-	public void unsuspend(String username, Database dtb);
+	public boolean suspend(String username, Database dtb);
+	public boolean unsuspend(String username, Database dtb);
 
 }

@@ -22,7 +22,7 @@ public class Verification implements IVerification{
 		return true;
 	}
 	
-	public void verifyDriver(String driverUserName, Database dtb) {
+	public boolean verifyDriver(String driverUserName, Database dtb) {
 		for(int i = 0; i < unapprovedDrivers.size(); i++) {
 			if(driverUserName.equals(unapprovedDrivers.get(i).getUsername())) {
 				
@@ -31,11 +31,20 @@ public class Verification implements IVerification{
 				dtb.applicationUsers.add(unapprovedDrivers.get(i));	//Adding the driver in the database.
 				
 				unapprovedDrivers.remove(i);	//Removing this driver from the unapproved drivers.
+				
+				return true;
 			}
 		}
+		return false; //Driver was not found in the unapprovedDrivers list.
 	}
 	
 	public void listPendingRequests() {
+		if(unapprovedDrivers.size() == 0) {
+			System.out.println("No pending requests");
+			System.out.println("");
+			return;
+		}
+
 		for(int i = 0; i < unapprovedDrivers.size(); i++) {
 			System.out.println("-----------------------------------");
 			System.out.println("Driver " + (i+1) + " info");

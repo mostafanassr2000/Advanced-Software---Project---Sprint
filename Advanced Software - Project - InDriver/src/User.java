@@ -1,12 +1,14 @@
 import java.util.ArrayList;
 
-public class User extends ApplicationUser implements IRide{
+public class User extends ApplicationUser implements IUserRide{
 	
 	/*Attributes*/
 	public ArrayList<IDriver> nearbyDrivers;	
 
 	private String source = "";
 	private String destination = "";
+	private float receivedOffer;
+	private IDriver currentDriver;
 	
 	/*Constructor*/
 	public User(String username, String email, String password, String mobileNumber, String keyType) {
@@ -26,7 +28,7 @@ public class User extends ApplicationUser implements IRide{
 		}
 		
 		for(IDriver drv : nearbyDrivers) {	//Notify Drivers
-			drv.update(this);
+			drv.update(this, source, destination);
 		}
 		
 		return true;
@@ -47,13 +49,31 @@ public class User extends ApplicationUser implements IRide{
 			}
 		}		
 	}
+	
+	public void cancelRide() {
+		for(IDriver drv : nearbyDrivers) {	//Removing the ride from all drivers.
+			drv.removeUser();
+		}
+	}
 
-	public void freeArrayList() {
+	public void removeDrivers() {
 		for(int i = 0; i < nearbyDrivers.size(); i++) {
 			nearbyDrivers.remove(i);
 		}
 	}
 	
+	public void receiveOffer(float offer, IDriver driver) {	//Receives the offer from the driver
+		receivedOffer = offer;
+		this.currentDriver = driver;
+	}
+	
+	public void rateRide(int rate) {
+		currentDriver.setRate(rate);
+	}
+	
+	public float getDriverAvgRate() {
+		return currentDriver.getDriverAvgRating();
+	}
 	
 	/*Getters*/
 	public String getSource() {
@@ -63,9 +83,21 @@ public class User extends ApplicationUser implements IRide{
 	public String getDestination() {
 		return destination;
 	}
+	
+	public float getOffer() {
+		return receivedOffer;
+	}
+	
+	public IDriver getDriver() {
+		return currentDriver;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
 
 	public String toString() {
-		return "User Name: " + getUsername() + "-----" + "Type: " + keyType(); 
+		return "Name: " + getUsername()+ "\n" + "Mobile Number: " + getMobileNumber(); 
 	}
 
 }

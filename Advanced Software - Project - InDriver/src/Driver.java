@@ -1,22 +1,28 @@
 import java.util.ArrayList;
 
-public class Driver extends ApplicationUser implements IDriver {
+public class Driver extends ApplicationUser implements IDriver, IRates {
 	
 	/*Attributes*/
 	private String drivingLicense = "";
 	private String nationalID = "";
 	private boolean approved = false;
-	public ArrayList<String> favAreas;
+	private float avgRating;
+	private String userDestination;
+	private String userSource;
+	private IUserRide nearbyUser;
 	
-	public ArrayList<User> nearbyPassengers;	//Nearby passengers.
+	public ArrayList<String> favAreas;
+	public ArrayList<DriverRatings> userRatings;
 	
 	/*Constructor*/
 	public Driver(String userName, String email, String password, String mobileNumber, String keyType, String drivingLicense, String nationalID) {
 		super(userName, email, password, mobileNumber, keyType);
 		this.drivingLicense = drivingLicense;
 		this.nationalID = nationalID;
+		
 		favAreas = new ArrayList<String>();
-		nearbyPassengers = new ArrayList<User>();
+		userRatings = new ArrayList<DriverRatings>();
+		avgRating = 0;
 	}
 	
 	/*Methods*/
@@ -33,20 +39,61 @@ public class Driver extends ApplicationUser implements IDriver {
 		favAreas.add(favArea);
 	}
 	
-	public void update(User user) {
-		nearbyPassengers.add(user);
+	public boolean listRides() {
+		if(nearbyUser == null) {
+			System.out.println("There is no nearby passengers");
+			System.out.println("");
+			return false;
+		}
+		
+		System.out.println(nearbyUser);
+		System.out.println("Source: " + this.userSource);
+		System.out.println("Destination: " + this.userDestination);
+		return true;
 	}
-
-	public void offer() {
 	
+	public void update(IUserRide user, String userSource, String userDestination) {
+		nearbyUser = user;
+		this.userSource = userSource;
+		this.userDestination = userDestination;
+	}
+	
+	public void removeUser() {	//Canceling the ride.
+		nearbyUser = null;
+	}
+	
+	public void offer(float offer) {
+		nearbyUser.receiveOffer(offer, this);
 	}
 
-	public void listRides() {
-		for(User user : nearbyPassengers) {
-			System.out.println(user);
+	public void setRate(int rate) {
+		DriverRatings drvRatings = new DriverRatings(rate, nearbyUser);
+		userRatings.add(drvRatings);	//Adding the rating of the user to the array list.
+	}
+	
+	public void calcAvgRate() {
+
+		int temp = 0;
+		for(int i = 0; i < userRatings.size(); i++) {
+			temp += userRatings.get(i).getRate();
+		}
+		avgRating = temp / userRatings.size();
+	}
+	
+	public void listUserRatings() {
+		
+		if(userRatings.size() == 0) {	
+			System.out.println("You have no user ratings in the meantime.");
+			System.out.println("");
+			return;
+		}
+		
+		for(int i = 0; i < userRatings.size(); i++) {
+			System.out.println("-----------------");
+			System.out.println(userRatings.get(i));
+			System.out.println("-----------------");
 		}
 	}
-	
 	
 	/*Getters*/
 	public String getNationalID() {
@@ -57,8 +104,20 @@ public class Driver extends ApplicationUser implements IDriver {
 		return drivingLicense;
 	}
 	
+	public float getDriverAvgRating() {
+		return avgRating;
+	}
+
+	public String getUserSource() {
+		return userSource;
+	}
+	
+	public String getUserDestination() {
+		return userDestination;
+	}
+	
 	public String toString() {
-		return "User Name: " + getUsername() + "-----" + "Type: " + keyType(); 
+		return "Driver Name: " + getUsername()+ "\n" + "Mobile Number: " + getMobileNumber() + "\n" + "Driver Rating: " + getDriverAvgRating(); 
 	}
 
 

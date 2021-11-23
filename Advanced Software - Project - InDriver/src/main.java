@@ -11,7 +11,8 @@ public class main {
 		
 		String username, email, password, mobileNumber, nationalID, drivingLicense;
 		String unapprovedDriver, favArea, source, destination;
-		int mainChoice, registerChoice, loginChoice, adminOption, driverOption, userOption;
+		int mainChoice, registerChoice, loginChoice, adminOption, driverOption, userOption, offerChoice, rate;
+		float offer;
 		
 		Database dtb = new Database();
 		Verification verification = new Verification();
@@ -39,6 +40,7 @@ public class main {
 				System.out.println("3. Back to the main menu");
 				
 				registerChoice = Integer.parseInt(reader.nextLine());
+				System.out.println("");
 				
 				if(registerChoice == 1) {	//USER
 					
@@ -107,6 +109,7 @@ public class main {
 				username = reader.nextLine();
 				System.out.println("Enter Password: ");
 				password = reader.nextLine();	
+				System.out.println("");
 				
 				if(admin.login(username, password, dtb) != null) {	//Logged in
 					ApplicationUser applicationUser = admin.login(username, password, dtb);
@@ -117,7 +120,7 @@ public class main {
 						
 						while(true) {
 							System.out.println("1. Request a ride");
-							System.out.println("2. ");
+							System.out.println("2. List offers");
 							System.out.println("3. Log out");
 							
 							userOption = Integer.parseInt(reader.nextLine());
@@ -134,10 +137,47 @@ public class main {
 									System.out.println("There is no nearby drivers in this area.");
 								}
 								
-								user.freeArrayList();
+								
 								System.out.println("");
 							}
-							else if(userOption == 2) {
+							else if(userOption == 2) {	//List offers.
+								
+								if(user.getDriver() == null) {	//No drivers.
+									System.out.println("No nearby drivers");
+								}
+								else {
+									System.out.println(user.getDriver());
+									System.out.println("");
+									System.out.println("Offer: " + user.getOffer());
+									System.out.println("");
+									System.out.println("1. Accept");
+									System.out.println("2. Deny");
+									offerChoice = Integer.parseInt(reader.nextLine());
+									
+									if(offerChoice == 1) {	//Accept
+										
+										System.out.println("Rate ride 1:5 (1 Worst/ 5 Best)");
+										rate = Integer.parseInt(reader.nextLine());
+										
+										if(rate > 5 || rate < 1) {
+											System.out.println(invalidInputMessage);
+											continue;
+										}
+										
+										user.rateRide(rate);
+										user.getDriver().calcAvgRate();
+										user.cancelRide(); //Removes the ride from all drivers (No longer needed.)
+										user.removeDrivers();	//Removes the nearby drivers from user
+									}
+									else if(offerChoice == 2) {	//Deny
+										user.removeDrivers();
+									}
+									else {
+										System.out.println(invalidInputMessage);
+									}
+									
+									user.receiveOffer(0, null); //Reinitializing the driver.
+								}
 
 							}
 							else if(userOption == 3) {
@@ -149,7 +189,6 @@ public class main {
 							
 						}
 						
-						
 					}
 					else if(applicationUser instanceof Driver) {	//Driver
 						Driver driver = (Driver) applicationUser;
@@ -157,7 +196,8 @@ public class main {
 						while(true) {
 							System.out.println("1. Add favorite area");
 							System.out.println("2. List available rides");
-							System.out.println("3. Log out");
+							System.out.println("3. List user ratings");
+							System.out.println("4. Log out");
 							
 							driverOption = Integer.parseInt(reader.nextLine());
 							
@@ -170,10 +210,17 @@ public class main {
 							}
 							else if(driverOption == 2) {
 								System.out.println("");
-								driver.listRides();
-								System.out.println("");
+								if(driver.listRides()) {	//If there are nearby passengers.		
+									System.out.println("");
+									System.out.println("Enter offer: ");
+									offer = Float.parseFloat(reader.nextLine());
+									driver.offer(offer);  //Sending the offer price to the user.
+								}
 							}
 							else if(driverOption == 3) {
+								driver.listUserRatings();
+							}
+							else if(driverOption == 4) {
 								break;
 							}
 							else {
@@ -191,7 +238,6 @@ public class main {
 							System.out.println("5. Unsuspend an account");
 							System.out.println("6. Log out");
 							
-							
 							adminOption = Integer.parseInt(reader.nextLine());
 							
 							if(adminOption == 1) {	//List unapproved drivers 
@@ -200,7 +246,16 @@ public class main {
 							else if (adminOption == 2) {	//Approve a driver
 								System.out.println("Enter the driver's username: ");
 								unapprovedDriver = reader.nextLine();
-								admin.verifyDriver(unapprovedDriver, dtb);
+								
+								if(!admin.verifyDriver(unapprovedDriver, dtb)) {	//If the unapproved driver wasn't found in the list.
+									System.out.println("Driver was not found");
+									System.out.println("");
+									continue;
+								}
+								
+								System.out.println("Driver has been approved!");
+								System.out.println("");
+								
 							}
 							else if (adminOption == 3) {	//List suspened users
 								admin.listSuspendedUsers();
@@ -208,14 +263,27 @@ public class main {
 							else if (adminOption == 4) {	//Suspend an account
 								System.out.println("Enter the user's username: ");
 								username = reader.nextLine();
-								admin.suspend(username, dtb);
-								System.out.println("User has been suspended");
+								
+								if(!admin.suspend(username, dtb)) {		//If the user wasn't found in the list.
+									System.out.println("Account was not found");
+									System.out.println("");
+									continue;
+								}
+								
+								System.out.println("Account has been suspended");
+								System.out.println("");
 							}
 							else if (adminOption == 5) {	//Unsuspend an account
 								System.out.println("Enter the user's username: ");
 								username = reader.nextLine();
-								admin.unsuspend(username, dtb);
-								System.out.println("User has been unsuspended");
+								if(!admin.unsuspend(username, dtb)) {		//If the user wasn't found in the list.
+									System.out.println("Account was not found");
+									System.out.println("");
+									continue;
+								}
+								
+								System.out.println("Account has been unsuspended");
+								System.out.println("");
 							}
 							
 							else if (adminOption == 6) {

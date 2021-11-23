@@ -1,7 +1,6 @@
 
 public class Register implements IAccess {
 	Database dtb;
-	
 
 	@Override
 	public boolean register(Database dtb, ApplicationUser AU) {

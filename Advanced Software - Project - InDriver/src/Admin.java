@@ -1,5 +1,5 @@
 
-public class Admin extends ApplicationUser{
+public class Admin extends ApplicationUser implements IAdmin{
 
 	/*Attributes*/
 	ISuspension suspensionObj;
@@ -24,24 +24,21 @@ public class Admin extends ApplicationUser{
 		verificationObj.listPendingRequests();
 	}
 	
-	public void verifyDriver(String driverUserName, Database dtb) {
-		verificationObj.verifyDriver(driverUserName, dtb);
+	public boolean verifyDriver(String driverUserName, Database dtb) {
+		return verificationObj.verifyDriver(driverUserName, dtb);
 	}
 	
 	public void listSuspendedUsers() {
 		suspensionObj.listSuspendedUsers();
 	}
 	
-	public void suspend(String un, Database dtb) {
-		suspensionObj.suspend(un, dtb);
+	public boolean suspend(String un, Database dtb) {
+		return suspensionObj.suspend(un, dtb);
 	}
 	
-	public void unsuspend(String un, Database dtb) {
-		suspensionObj.unsuspend(un, dtb);
+	public boolean unsuspend(String un, Database dtb) {
+		return suspensionObj.unsuspend(un, dtb);
 	}
-	
-	
-	
 	
 	public String toString() {
 		return "User Name: " + getUsername() + "-----" + "Type: " + keyType(); 
